@@ -32,4 +32,13 @@ public class DiffService {
         diffRequest.setLeftSideData(data);
         diffRespository.save(diffRequest);
     }
+
+
+    public void saveRightSideOfADiff(Integer diffId, byte[] data) {
+
+        DiffRequest diffRequest = new DiffRequest();
+        diffRequest.setId(diffId);
+        diffRequest.setRightSideData(data);
+        diffRespository.save(diffRequest);
+    }
 }
