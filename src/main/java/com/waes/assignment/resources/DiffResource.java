@@ -33,6 +33,7 @@ public class DiffResource {
                                                      @RequestBody RequestBinaryDataInsertion request) {
 
         byte[] decodeData = Base64.getDecoder().decode(request.getData());
+        diffService.saveRightSideOfADiff(id, decodeData);
         return ResponseEntity.created(getDiffUrl(id)).build();
     }
 
