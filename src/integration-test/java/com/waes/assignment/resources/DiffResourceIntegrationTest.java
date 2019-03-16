@@ -19,7 +19,7 @@ import java.util.Optional;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class DiffResourceTest {
+public class DiffResourceIntegrationTest {
 
     @Autowired
     private WebTestClient webClient;
