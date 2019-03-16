@@ -4,10 +4,7 @@ import com.waes.assignment.model.RequestBinaryDataInsertion;
 import com.waes.assignment.service.DiffService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriTemplate;
 
 import java.net.URI;
@@ -35,6 +32,11 @@ public class DiffResource {
         byte[] decodeData = Base64.getDecoder().decode(request.getData());
         diffService.saveRightSideOfADiff(id, decodeData);
         return ResponseEntity.created(getDiffUrl(id)).build();
+    }
+
+    @GetMapping("/V1/diff/{id}")
+    public ResponseEntity getDiff(@PathVariable Integer id) {
+        return ResponseEntity.ok().build();
     }
 
     private URI getDiffUrl(Integer id) {

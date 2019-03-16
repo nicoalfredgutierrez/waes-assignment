@@ -65,6 +65,21 @@ public class DiffResourceIntegrationTest {
         theDiffRequestHasBeenSaved(diffId, null, decodedData);
     }
 
+    @Test
+    public void theDiffOverARequestWithTheSameDataOnBothSidesReturnsThat() {
+
+        final Integer diffId = 12;
+        givenThatExistsADiffRequestWithTheSameRightAndLeftDataAndId();
+
+        this.webClient.get().uri("/V1/diff/" + diffId)
+                .exchange().expectStatus().isOk();
+    }
+
+    private void givenThatExistsADiffRequestWithTheSameRightAndLeftDataAndId() {
+
+
+    }
+
     private void theDiffRequestHasBeenSaved(Integer diffId, byte[] leftData, byte[] rightData) {
 
         Optional<DiffRequest> request = diffRequestRepository.findById(diffId);
