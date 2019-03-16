@@ -28,7 +28,7 @@ public class DiffResourceIntegrationTest {
     private DiffRequestRepository diffRequestRepository;
 
     @Test
-    public void theLeftSideOfADiffIsPersistedAsNew() {
+    public void theLeftSideOfADiffIsSaved() {
 
         final Integer diffId = 12;
         byte[] originalData = DatatypeConverter.parseHexBinary("AAAAAAAAAAAAAAAAAAAAAAAAAA");
@@ -43,11 +43,25 @@ public class DiffResourceIntegrationTest {
         theDiffRequestHasBeenSaved(diffId, originalData);
     }
 
-    private void theDiffRequestHasBeenSaved(Integer diffId, byte[] originalData) {
+    @Test
+    public void theRightSideOfDiffIsPersisted() {
+
+        final Integer diffId = 12;
+        byte[] originalData = DatatypeConverter.parseHexBinary("AAAAAAAAAAAAAAAAAAAAAAAAAA");
+        final String base64Data = getBase64EncodedBody(originalData);
+        RequestBinaryDataInsertion request =  new RequestBinaryDataInsertion();
+        request.setData(base64Data);
+
+        this.webClient.post().uri("/V1/diff/12/right")
+                .body(BodyInserters.fromObject(request))
+                .exchange().expectStatus().isCreated();
+    }
+
+    private void theDiffRequestHasBeenSaved(Integer diffId, byte[] leftData) {
 
         Optional<DiffRequest> request = diffRequestRepository.findById(diffId);
         assertThat(request.isPresent()).isTrue();
-        assertThat(request.get().getLeftSideData()).isEqualTo(originalData);
+        assertThat(request.get().getLeftSideData()).isEqualTo(leftData);
     }
 
     private String getBase64EncodedBody(byte[] data) {

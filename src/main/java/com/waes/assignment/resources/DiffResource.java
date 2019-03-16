@@ -20,11 +20,19 @@ public class DiffResource {
     private DiffService diffService;
 
     @PostMapping("/V1/diff/{id}/left")
-    public ResponseEntity<Integer> createSideOfADiff(@PathVariable Integer id,
+    public ResponseEntity<Integer> createLeftSideOfADiff(@PathVariable Integer id,
                                                      @RequestBody RequestBinaryDataInsertion request) {
 
         byte[] decodeData = Base64.getDecoder().decode(request.getData());
         diffService.saveLeftSideOfADiff(id, decodeData);
+        return ResponseEntity.created(getDiffUrl(id)).build();
+    }
+
+    @PostMapping("/V1/diff/{id}/right")
+    public ResponseEntity<Integer> createRightSideOfADiff(@PathVariable Integer id,
+                                                     @RequestBody RequestBinaryDataInsertion request) {
+
+        byte[] decodeData = Base64.getDecoder().decode(request.getData());
         return ResponseEntity.created(getDiffUrl(id)).build();
     }
 
