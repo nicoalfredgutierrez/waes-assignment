@@ -3,7 +3,7 @@ package com.waes.assignment.model;
 import javax.persistence.Entity;
 
 @Entity
-public class Diff {
+public class DiffRequest {
 
     private Integer id;
     private byte[] leftSideData;

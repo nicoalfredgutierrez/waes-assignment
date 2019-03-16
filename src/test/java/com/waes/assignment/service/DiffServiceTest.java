@@ -3,8 +3,8 @@ package com.waes.assignment.service;
 import static org.mockito.Mockito.*;
 import static org.assertj.core.api.Assertions.*;
 
-import com.waes.assignment.model.Diff;
-import com.waes.assignment.repositories.DiffRepository;
+import com.waes.assignment.model.DiffRequest;
+import com.waes.assignment.repositories.DiffRequestRepository;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -16,21 +16,21 @@ import org.mockito.junit.MockitoJUnitRunner;
 public class DiffServiceTest {
 
     private DiffService instance;
-    private DiffRepository respository;
+    private DiffRequestRepository respository;
 
     @Captor
-    private ArgumentCaptor<Diff> diffCaptor;
+    private ArgumentCaptor<DiffRequest> diffRequestCaptor;
 
     @Before
     public void initialize() {
 
         instance = new DiffService();
-        respository = mock(DiffRepository.class);
+        respository = mock(DiffRequestRepository.class);
         instance.setDiffRepository(respository);
     }
 
     @Test
-    public void theLeftSideOfAnUnexistingDiffIsSavedSoTheDiffIsCreated() {
+    public void theLeftSideOfAnUnexistingDiffIsSavedSoTheDiffRequestIsCreated() {
 
         final Integer diffId = 13;
         final byte[] data = {(byte)0x80, 0x53, 0x1c,
@@ -39,12 +39,12 @@ public class DiffServiceTest {
 
         instance.saveLeftSideOfADiff(diffId, data);
 
-        thenTheDiffHasBeenPersistedAsNewWith(diffId, data);
+        thenTheDiffRequestHasBeenPersistedAsNewWith(diffId, data);
 
     }
 
     @Test
-    public void theLeftSideOfAnExistingDiffIsSavedSoTheExistingDiffIsUpdated() {
+    public void theLeftSideOfAnExistingDiffRequestIsSavedSoTheExistingDiffRequestIsUpdated() {
 
         final Integer diffId = 13;
         final byte[] data = {(byte)0x80, 0x53, 0x1c,
@@ -52,36 +52,36 @@ public class DiffServiceTest {
                 0x00, 0x2b, 0x30, 0x30, (byte)0x9d };
 
 
-        Diff exisitingDiff = givenThatTheDiffExistsWithTheRightDataLoaded(diffId);
+        DiffRequest exisitingDiffRequest = givenThatTheDiffRequestExistsWithTheRightDataLoaded(diffId);
 
         instance.saveLeftSideOfADiff(diffId, data);
 
-        theLeftDataHasBeenUpdated(exisitingDiff, data);
+        theLeftDataHasBeenUpdated(exisitingDiffRequest, data);
     }
 
-    private void theLeftDataHasBeenUpdated(Diff existingDiff, byte[] newLeftData) {
+    private void theLeftDataHasBeenUpdated(DiffRequest existingDiff, byte[] newLeftData) {
 
-        verify(respository, times(1)).save(diffCaptor.capture());
-        assertThat(diffCaptor.getValue().getId()).isEqualTo(existingDiff.getId());
-        assertThat(diffCaptor.getValue().getRightSideData()).isEqualTo(existingDiff.getRightSideData());
-        assertThat(diffCaptor.getValue().getLeftSideData()).isEqualTo(newLeftData);
+        verify(respository, times(1)).save(diffRequestCaptor.capture());
+        assertThat(diffRequestCaptor.getValue().getId()).isEqualTo(existingDiff.getId());
+        assertThat(diffRequestCaptor.getValue().getRightSideData()).isEqualTo(existingDiff.getRightSideData());
+        assertThat(diffRequestCaptor.getValue().getLeftSideData()).isEqualTo(newLeftData);
     }
 
-    private Diff givenThatTheDiffExistsWithTheRightDataLoaded(Integer diffId) {
+    private DiffRequest givenThatTheDiffRequestExistsWithTheRightDataLoaded(Integer diffId) {
 
-        Diff diff = new Diff();
-        diff.setId(diffId);
+        DiffRequest diffRequest = new DiffRequest();
+        diffRequest.setId(diffId);
         byte[] data = new byte[10];
-        diff.setRightSideData(data);
-        when(respository.getOne(diffId)).thenReturn(diff);
-        return diff;
+        diffRequest.setRightSideData(data);
+        when(respository.getOne(diffId)).thenReturn(diffRequest);
+        return diffRequest;
     }
 
-    private void thenTheDiffHasBeenPersistedAsNewWith(Integer diffId, byte[] data) {
+    private void thenTheDiffRequestHasBeenPersistedAsNewWith(Integer diffId, byte[] data) {
 
-        verify(respository, times(1)).save(diffCaptor.capture());
-        assertThat(diffCaptor.getValue().getId()).isEqualTo(diffId);
-        assertThat(diffCaptor.getValue().getLeftSideData()).isEqualTo(data);
+        verify(respository, times(1)).save(diffRequestCaptor.capture());
+        assertThat(diffRequestCaptor.getValue().getId()).isEqualTo(diffId);
+        assertThat(diffRequestCaptor.getValue().getLeftSideData()).isEqualTo(data);
     }
 
 }
