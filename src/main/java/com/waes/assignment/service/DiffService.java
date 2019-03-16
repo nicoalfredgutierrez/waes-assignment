@@ -19,6 +19,20 @@ public class DiffService {
 
     public void saveLeftSideOfADiff(Integer diffId, byte[] data) {
 
+        DiffRequest diffRequest = prepareDiffRequestForPersistence(diffId);
+        diffRequest.setLeftSideData(data);
+        diffRespository.save(diffRequest);
+    }
+
+    public void saveRightSideOfADiff(Integer diffId, byte[] data) {
+
+        DiffRequest diffRequest = prepareDiffRequestForPersistence(diffId);
+        diffRequest.setRightSideData(data);
+        diffRespository.save(diffRequest);
+    }
+
+    private DiffRequest prepareDiffRequestForPersistence(Integer diffId) {
+
         Optional<DiffRequest> dbDiffRequest = diffRespository.findById(diffId);
         DiffRequest diffRequest;
         if(dbDiffRequest.isPresent()) {
@@ -27,18 +41,9 @@ public class DiffService {
         } else {
 
             diffRequest = new DiffRequest();
+            diffRequest.setId(diffId);
         }
-        diffRequest.setId(diffId);
-        diffRequest.setLeftSideData(data);
-        diffRespository.save(diffRequest);
-    }
 
-
-    public void saveRightSideOfADiff(Integer diffId, byte[] data) {
-
-        DiffRequest diffRequest = new DiffRequest();
-        diffRequest.setId(diffId);
-        diffRequest.setRightSideData(data);
-        diffRespository.save(diffRequest);
+        return diffRequest;
     }
 }
