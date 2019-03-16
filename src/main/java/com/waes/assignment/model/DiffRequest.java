@@ -1,6 +1,8 @@
 package com.waes.assignment.model;
 
 import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Lob;
 
 @Entity
 public class DiffRequest {
@@ -9,14 +11,16 @@ public class DiffRequest {
     private byte[] leftSideData;
     private byte[] rightSideData;
 
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
+    @Id
     public Integer getId() {
         return id;
     }
 
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    @Lob
     public byte[] getLeftSideData() {
         return leftSideData;
     }
@@ -25,6 +29,7 @@ public class DiffRequest {
         this.leftSideData = leftSideData;
     }
 
+    @Lob
     public byte[] getRightSideData() {
         return rightSideData;
     }
