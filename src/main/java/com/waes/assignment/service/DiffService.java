@@ -3,27 +3,33 @@ package com.waes.assignment.service;
 import com.waes.assignment.model.DiffRequest;
 import com.waes.assignment.repositories.DiffRequestRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
-@Service
+import java.util.Optional;
+
+@Component
 public class DiffService {
 
-    private DiffRequestRepository diffRequestRespository;
+    private DiffRequestRepository diffRespository;
 
     @Autowired
     public void setDiffRepository(DiffRequestRepository diffRespository) {
-        this.diffRequestRespository = diffRespository;
+        this.diffRespository = diffRespository;
     }
 
     public void saveLeftSideOfADiff(Integer diffId, byte[] data) {
 
-        DiffRequest diff = diffRequestRespository.getOne(diffId);
-        if(diff == null) {
+        Optional<DiffRequest> dbDiffRequest = diffRespository.findById(diffId);
+        DiffRequest diffRequest;
+        if(dbDiffRequest.isPresent()) {
 
-            diff = new DiffRequest();
+            diffRequest = dbDiffRequest.get();
+        } else {
+
+            diffRequest = new DiffRequest();
         }
-        diff.setId(diffId);
-        diff.setLeftSideData(data);
-        diffRequestRespository.save(diff);
+        diffRequest.setId(diffId);
+        diffRequest.setLeftSideData(data);
+        diffRespository.save(diffRequest);
     }
 }

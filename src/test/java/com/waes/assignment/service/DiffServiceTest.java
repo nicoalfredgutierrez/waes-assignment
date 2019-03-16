@@ -12,6 +12,8 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import java.util.Optional;
+
 @RunWith(MockitoJUnitRunner.class)
 public class DiffServiceTest {
 
@@ -73,7 +75,7 @@ public class DiffServiceTest {
         diffRequest.setId(diffId);
         byte[] data = new byte[10];
         diffRequest.setRightSideData(data);
-        when(respository.getOne(diffId)).thenReturn(diffRequest);
+        when(respository.findById(diffId)).thenReturn(Optional.of(diffRequest));
         return diffRequest;
     }
 
