@@ -119,23 +119,27 @@ public class DiffServiceTest {
     }
 
     @Test
-    public void aDiffIsExecutedOverARequestWithSAmeDataSizesbutOneDifferenceInContent() {
+    public void aDiffIsExecutedOverARequestWithSAmeDataSizesbutOneDifferenceInContentAtTheBeginning() {
 
         final Integer diffId = 13;
-        givenThatExistsARequestHasSameDataSizeButOneDifferenceInContent(diffId);
+        givenThatExistsARequestHasSameDataSizeButOneDifferenceInContentAtTheBeginning(diffId);
 
         Diff diff = instance.executeDiff(diffId);
 
         assertThat(diff).isNotNull();
         assertThat(diff.getDiffResult()).as("The diff result is invalid")
                 .isEqualTo(DiffExecutionResult.DIFFERENT_CONTENT);
+        assertThat(diff.getDifferences()).as("No difference has been specified")
+                .hasSize(1);
+        assertThat(diff.getDifferences().get(0).getOffset()).as("The Offset of the difference is incorrect")
+                .isEqualTo(0);
+        assertThat(diff.getDifferences().get(0).getLength()).as("The Length of the difference is incorrect")
+                .isEqualTo(2);
     }
 
-    private void givenThatExistsARequestHasSameDataSizeButOneDifferenceInContent(Integer diffId) {
-
-        byte[] leftData = DatatypeConverter.parseHexBinary("AAAAFFFFAAAADD");
-        byte[] rightData = DatatypeConverter.parseHexBinary("AAAAAAAAAAAADD");
-
+    private void givenThatExistsARequestHasSameDataSizeButOneDifferenceInContentAtTheBeginning(Integer diffId) {
+        byte[] leftData = DatatypeConverter.parseHexBinary( "FFFFAAAAAAAA");
+        byte[] rightData = DatatypeConverter.parseHexBinary("AAAAAAAAAAAA");
         DiffRequest diffRequest = new DiffRequest();
         diffRequest.setId(diffId);
         diffRequest.setLeftSideData(leftData);

@@ -3,11 +3,14 @@ package com.waes.assignment.service;
 import com.waes.assignment.model.Diff;
 import com.waes.assignment.model.DiffExecutionResult;
 import com.waes.assignment.model.DiffRequest;
+import com.waes.assignment.model.DifferenceDetail;
 import com.waes.assignment.repositories.DiffRequestRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 @Component
@@ -48,8 +51,35 @@ public class DiffService {
         } else {
 
             diff.setDiffResult(DiffExecutionResult.DIFFERENT_CONTENT);
+            List<DifferenceDetail> differences = detectDifferences(diffRequest);
+            diff.setDifferences(differences);
         }
         return diff;
+    }
+
+    private List<DifferenceDetail> detectDifferences(DiffRequest diffRequest) {
+
+        byte[] leftSideData = diffRequest.getLeftSideData();
+        byte[] rightSideData = diffRequest.getRightSideData();
+        DifferenceDetail currentDetail = null;
+        List<DifferenceDetail> differences = new ArrayList<>();
+
+        for(int i=0; i< leftSideData.length; i++) {
+
+            if(leftSideData[i] != rightSideData[i]) {
+                if(currentDetail == null) {
+                    currentDetail = new DifferenceDetail();
+                    currentDetail.setOffset(i);
+                }
+                currentDetail.addDifference();
+            } else if (currentDetail != null) {
+
+                    differences.add(currentDetail);
+                    currentDetail = null;
+            }
+        }
+
+        return differences;
     }
 
     private DiffRequest prepareDiffRequestForPersistence(Integer diffId) {
