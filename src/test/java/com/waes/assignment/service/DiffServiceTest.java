@@ -126,18 +126,34 @@ public class DiffServiceTest {
 
         Diff diff = instance.executeDiff(diffId);
 
-        assertThat(diff).isNotNull();
-        assertThat(diff.getDiffResult()).as("The diff result is invalid")
-                .isEqualTo(DiffExecutionResult.DIFFERENT_CONTENT);
-        assertThat(diff.getDifferences()).as("No difference has been specified")
-                .hasSize(1);
-        assertThat(diff.getDifferences().get(0).getOffset()).as("The Offset of the difference is incorrect")
-                .isEqualTo(0);
-        assertThat(diff.getDifferences().get(0).getLength()).as("The Length of the difference is incorrect")
-                .isEqualTo(2);
+        thenTheDifferenceHasBeenDetected(diff);
+    }
+
+    @Test
+    public void aDiffIsExecutedOverARequestWithSAmeDataSizesButTwoDifferences() {
+
+        final Integer diffId = 13;
+        givenThatExistsARequestHasSameDataSizeButTwoDifferences(diffId);
+
+        Diff diff = instance.executeDiff(diffId);
+
+        thenBothDifferenceaHaveBeenDetected(diff);
+    }
+
+    private void givenThatExistsARequestHasSameDataSizeButTwoDifferences(Integer diffId) {
+
+        byte[] leftData = DatatypeConverter.parseHexBinary( "FFFFAAAAAAAAAAAA");
+        byte[] rightData = DatatypeConverter.parseHexBinary("AAAAAAFFFFFFAAAA");
+
+        DiffRequest diffRequest = new DiffRequest();
+        diffRequest.setId(diffId);
+        diffRequest.setLeftSideData(leftData);
+        diffRequest.setRightSideData(rightData);
+        when(respository.findById(diffId)).thenReturn(Optional.of(diffRequest));
     }
 
     private void givenThatExistsARequestHasSameDataSizeButOneDifferenceInContentAtTheBeginning(Integer diffId) {
+
         byte[] leftData = DatatypeConverter.parseHexBinary( "FFFFAAAAAAAA");
         byte[] rightData = DatatypeConverter.parseHexBinary("AAAAAAAAAAAA");
         DiffRequest diffRequest = new DiffRequest();
@@ -219,6 +235,33 @@ public class DiffServiceTest {
         assertThat(diffRequestCaptor.getValue().getId()).isEqualTo(diffId);
         assertThat(diffRequestCaptor.getValue().getLeftSideData()).isEqualTo(leftData);
         assertThat(diffRequestCaptor.getValue().getRightSideData()).isEqualTo(rightData);
+    }
+
+    private void thenTheDifferenceHasBeenDetected(Diff diff) {
+
+        assertThat(diff).isNotNull();
+        assertThat(diff.getDiffResult()).as("The diff result is invalid")
+                .isEqualTo(DiffExecutionResult.DIFFERENT_CONTENT);
+        assertThat(diff.getDifferences()).as("No difference has been specified")
+                .hasSize(1);
+        assertThat(diff.getDifferences().get(0).getOffset()).as("The Offset of the difference is incorrect")
+                .isEqualTo(0);
+        assertThat(diff.getDifferences().get(0).getLength()).as("The Length of the difference is incorrect")
+                .isEqualTo(2);
+    }
+
+    private void thenBothDifferenceaHaveBeenDetected(Diff diff) {
+
+        assertThat(diff).isNotNull();
+        assertThat(diff.getDiffResult()).as("The diff result is invalid")
+                .isEqualTo(DiffExecutionResult.DIFFERENT_CONTENT);
+        assertThat(diff.getDifferences()).as("Some differences hasn't been detected")
+                .hasSize(2);
+        assertThat(diff.getDifferences().get(0).getOffset()).isEqualTo(0).as("The first offset is incorrect");
+        assertThat(diff.getDifferences().get(0).getLength()).isEqualTo(2).as("The first length is incorrect");
+
+        assertThat(diff.getDifferences().get(1).getOffset()).isEqualTo(3).as("The second offset is incorrect");
+        assertThat(diff.getDifferences().get(1).getLength()).isEqualTo(3).as("The second length is incorrect");
     }
 
 }

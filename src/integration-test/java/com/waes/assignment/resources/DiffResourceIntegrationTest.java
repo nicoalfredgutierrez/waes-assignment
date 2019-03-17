@@ -87,6 +87,43 @@ public class DiffResourceIntegrationTest {
                 "}");
     }
 
+    @Test
+    public void theDiffOverARequestWithSameSizeButDifferentDataReturnTheDiffPositions() {
+
+        final Integer diffId = 12;
+        givenThatExistsADiffRequestWithSameSizeButDifferentContent(diffId);
+
+        this.webClient.get().uri("/V1/diff/" + diffId)
+                .exchange().expectStatus().isOk()
+                .expectBody().json("{\n" +
+                                "    diffResult: \"DIFFERENT_CONTENT\",\n" +
+                                "    differences:  [{\n" +
+                                "                     offset: 0,\n" +
+                                "                     length: 1\n" +
+                                "                   },{\n" +
+                                "                     offset: 6,\n" +
+                                "                     length: 2\n" +
+                                "                   },{\n" +
+                                "                     offset: 11,\n" +
+                                "                     length: 3\n" +
+                                "                   }]\n" +
+                                "}");
+    }
+
+    private void givenThatExistsADiffRequestWithSameSizeButDifferentContent(Integer diffId) {
+
+        RequestBinaryDataInsertion requestLeftData = createDataInsertionRequestFromHexString( "FFAAAAAAAAAAAAAAAAAAAAFFFFFF");
+        RequestBinaryDataInsertion requestRightData = createDataInsertionRequestFromHexString("AAAAAAAAAAAAFFFFAAAAAAAAAADD");
+
+        this.webClient.post().uri("/V1/diff/" + diffId + "/right")
+                .body(BodyInserters.fromObject(requestLeftData))
+                .exchange();
+
+        this.webClient.post().uri("/V1/diff/" + diffId + "/left")
+                .body(BodyInserters.fromObject(requestRightData))
+                .exchange();
+    }
+
     private void givenThatExistsADiffRequestWithDataWithDifferentSizes(Integer diffId) {
 
         RequestBinaryDataInsertion requestLeftData = createDataInsertionRequestFromHexString("AAAAAAAAAAAAAAAAAAAAAAAAAA");
