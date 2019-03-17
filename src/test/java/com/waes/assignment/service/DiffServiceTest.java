@@ -5,7 +5,7 @@ import static org.assertj.core.api.Assertions.*;
 
 import com.waes.assignment.model.Diff;
 import com.waes.assignment.model.DiffExecutionResult;
-import com.waes.assignment.model.DiffRequest;
+import com.waes.assignment.model.persistence.DiffRequest;
 import com.waes.assignment.model.exceptions.ApiException;
 import com.waes.assignment.model.exceptions.ResourceNotFoundException;
 import com.waes.assignment.repositories.DiffRequestRepository;

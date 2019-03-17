@@ -1,4 +1,4 @@
-package com.waes.assignment.model;
+package com.waes.assignment.model.persistence;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;

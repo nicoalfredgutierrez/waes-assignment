@@ -2,7 +2,7 @@ package com.waes.assignment.service;
 
 import com.waes.assignment.model.Diff;
 import com.waes.assignment.model.DiffExecutionResult;
-import com.waes.assignment.model.DiffRequest;
+import com.waes.assignment.model.persistence.DiffRequest;
 import com.waes.assignment.model.DifferenceDetail;
 import com.waes.assignment.model.exceptions.ApiException;
 import com.waes.assignment.model.exceptions.ResourceNotFoundException;

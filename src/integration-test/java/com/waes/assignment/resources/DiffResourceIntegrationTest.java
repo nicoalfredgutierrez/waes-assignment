@@ -1,7 +1,7 @@
 package com.waes.assignment.resources;
 
 import static org.assertj.core.api.Assertions.*;
-import com.waes.assignment.model.DiffRequest;
+import com.waes.assignment.model.persistence.DiffRequest;
 import com.waes.assignment.model.RequestBinaryDataInsertion;
 import com.waes.assignment.repositories.DiffRequestRepository;
 import org.junit.After;
