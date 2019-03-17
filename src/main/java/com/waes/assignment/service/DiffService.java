@@ -39,12 +39,15 @@ public class DiffService {
         DiffRequest diffRequest = diffRespository.findById(diffId).get();
         Diff diff = new Diff();
 
-        if(Arrays.equals(diffRequest.getLeftSideData(),diffRequest.getRightSideData())) {
+        if(Arrays.equals(diffRequest.getLeftSideData(), diffRequest.getRightSideData())) {
 
             diff.setDiffResult(DiffExecutionResult.EQUALS);
-        } else {
+        } else if (diffRequest.getLeftSideData().length != diffRequest.getRightSideData().length){
 
             diff.setDiffResult(DiffExecutionResult.DIFFERENT_SIZE);
+        } else {
+
+            diff.setDiffResult(DiffExecutionResult.DIFFERENT_CONTENT);
         }
         return diff;
     }

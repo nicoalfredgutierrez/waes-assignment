@@ -109,7 +109,7 @@ public class DiffServiceTest {
     public void aDiffIsExecutedOverARequestWithDifferentDataSizes() {
 
         final Integer diffId = 13;
-        givenThatExistsARequestHasDifferentSizeData(diffId);
+        givenThatExistsARequestHasDifferentDataSize(diffId);
 
         Diff diff = instance.executeDiff(diffId);
 
@@ -118,7 +118,32 @@ public class DiffServiceTest {
                 .isEqualTo(DiffExecutionResult.DIFFERENT_SIZE);
     }
 
-    private void givenThatExistsARequestHasDifferentSizeData(Integer diffId) {
+    @Test
+    public void aDiffIsExecutedOverARequestWithSAmeDataSizesbutOneDifferenceInContent() {
+
+        final Integer diffId = 13;
+        givenThatExistsARequestHasSameDataSizeButOneDifferenceInContent(diffId);
+
+        Diff diff = instance.executeDiff(diffId);
+
+        assertThat(diff).isNotNull();
+        assertThat(diff.getDiffResult()).as("The diff result is invalid")
+                .isEqualTo(DiffExecutionResult.DIFFERENT_CONTENT);
+    }
+
+    private void givenThatExistsARequestHasSameDataSizeButOneDifferenceInContent(Integer diffId) {
+
+        byte[] leftData = DatatypeConverter.parseHexBinary("AAAAFFFFAAAADD");
+        byte[] rightData = DatatypeConverter.parseHexBinary("AAAAAAAAAAAADD");
+
+        DiffRequest diffRequest = new DiffRequest();
+        diffRequest.setId(diffId);
+        diffRequest.setLeftSideData(leftData);
+        diffRequest.setRightSideData(rightData);
+        when(respository.findById(diffId)).thenReturn(Optional.of(diffRequest));
+    }
+
+    private void givenThatExistsARequestHasDifferentDataSize(Integer diffId) {
 
         byte[] leftData = DatatypeConverter.parseHexBinary("AAAAAAAAAAAA");
         byte[] rightData = DatatypeConverter.parseHexBinary("AAAAAAAAAAAADD");
