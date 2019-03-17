@@ -4,6 +4,7 @@ import com.waes.assignment.model.Diff;
 import com.waes.assignment.model.DiffExecutionResult;
 import com.waes.assignment.model.DiffRequest;
 import com.waes.assignment.model.DifferenceDetail;
+import com.waes.assignment.model.exceptions.ApiException;
 import com.waes.assignment.model.exceptions.ResourceNotFoundException;
 import com.waes.assignment.repositories.DiffRequestRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,12 +42,27 @@ public class DiffService {
     public Diff executeDiff(Integer diffId) throws ResourceNotFoundException  {
 
         Optional<DiffRequest> diffRequest = diffRespository.findById(diffId);
+
         if(diffRequest.isPresent()) {
 
+            checkIfDataIsFullyLoaded(diffRequest.get());
             return executeDiff(diffRequest.get());
         } else {
 
             throw new ResourceNotFoundException("the diff with id " + diffId + " could not be found to execute");
+        }
+    }
+
+    private void checkIfDataIsFullyLoaded(DiffRequest diffRequest) {
+
+        if(diffRequest.getLeftSideData() == null) {
+
+            throw new ApiException("the diff with id " + diffRequest.getId() + " is missing the left data");
+        }
+
+        if(diffRequest.getRightSideData() == null) {
+
+            throw new ApiException("the diff with id " + diffRequest.getId() + " is missing the right data");
         }
     }
 

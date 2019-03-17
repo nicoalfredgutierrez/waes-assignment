@@ -36,7 +36,7 @@ public class DiffResource {
         return ResponseEntity.created(getDiffUrl(id)).build();
     }
 
-    @GetMapping(value = "/V1/diff/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/V1/diff/{id}", produces = MediaType. APPLICATION_JSON_VALUE)
     public ResponseEntity<Diff> getDiff(@PathVariable Integer id) {
 
         Diff diff = diffService.executeDiff(id);

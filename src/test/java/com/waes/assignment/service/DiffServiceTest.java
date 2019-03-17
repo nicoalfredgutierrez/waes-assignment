@@ -6,6 +6,7 @@ import static org.assertj.core.api.Assertions.*;
 import com.waes.assignment.model.Diff;
 import com.waes.assignment.model.DiffExecutionResult;
 import com.waes.assignment.model.DiffRequest;
+import com.waes.assignment.model.exceptions.ApiException;
 import com.waes.assignment.model.exceptions.ResourceNotFoundException;
 import com.waes.assignment.repositories.DiffRequestRepository;
 import org.junit.Assert;
@@ -96,10 +97,10 @@ public class DiffServiceTest {
     }
 
     @Test
-    public void aDiffIsExecutedOverARequestWithTheSameLeftAndRighrDataThenItReturnsEqualsResult() {
+    public void aDiffIsExecutedForARequestWithTheSameLeftAndRighrDataThenItReturnsEqualsResult() {
 
         final Integer diffId = 13;
-        givenThatExistsARequestHasTheSameData(diffId);
+        givenThatExistsARequestThatHasTheSameData(diffId);
 
         Diff diff = instance.executeDiff(diffId);
 
@@ -108,10 +109,10 @@ public class DiffServiceTest {
     }
 
     @Test
-    public void aDiffIsExecutedOverARequestWithDifferentDataSizes() {
+    public void aDiffIsExecutedForARequestWithDifferentDataSizes() {
 
         final Integer diffId = 13;
-        givenThatExistsARequestHasDifferentDataSize(diffId);
+        givenThatExistsARequestWithDifferentDataSize(diffId);
 
         Diff diff = instance.executeDiff(diffId);
 
@@ -121,10 +122,10 @@ public class DiffServiceTest {
     }
 
     @Test
-    public void aDiffIsExecutedOverARequestWithSAmeDataSizesbutOneDifferenceInContentAtTheBeginning() {
+    public void aDiffIsExecutedForARequestWithSAmeDataSizesbutOneDifferenceInContentAtTheBeginning() {
 
         final Integer diffId = 13;
-        givenThatExistsARequestHasSameDataSizeButOneDifferenceInContentAtTheBeginning(diffId);
+        givenThatExistsARequestThatHasTheSameDataSizeButOneDifferenceInContentAtTheBeginning(diffId);
 
         Diff diff = instance.executeDiff(diffId);
 
@@ -132,10 +133,10 @@ public class DiffServiceTest {
     }
 
     @Test
-    public void aDiffIsExecutedOverARequestWithSameDataSizesButTwoDifferences() {
+    public void aDiffIsExecutedForARequestWithSameDataSizesButTwoDifferences() {
 
         final Integer diffId = 13;
-        givenThatExistsARequestHasSameDataSizeButTwoDifferences(diffId);
+        givenThatExistsARequestThatHasTheSameDataSizeButTwoDifferences(diffId);
 
         Diff diff = instance.executeDiff(diffId);
 
@@ -143,10 +144,10 @@ public class DiffServiceTest {
     }
 
     @Test
-    public void aDiffIsExecutedOverARequestWithSameDataSizesADifferenceAtTheEnd() {
+    public void aDiffIsExecutedForARequestWithSameDataSizesADifferenceAtTheEnd() {
 
         final Integer diffId = 13;
-        givenThatExistsARequestHasSameDataSizeButOneDifferenceAtTheEnd(diffId);
+        givenThatExistsARequestThatHasTheSameDataSizeButOneDifferenceAtTheEnd(diffId);
 
         Diff diff = instance.executeDiff(diffId);
 
@@ -154,7 +155,7 @@ public class DiffServiceTest {
     }
 
     @Test
-    public void aDiffIsExecutedOverANotExistingRequestSoItThrowsResourceNotFoundException() {
+    public void aDiffIsExecutedForANotExistingRequestSoItThrowsResourceNotFoundException() {
 
         final Integer diffId = 13;
         try {
@@ -168,7 +169,37 @@ public class DiffServiceTest {
 
     }
 
-    private void givenThatExistsARequestHasSameDataSizeButOneDifferenceAtTheEnd(Integer diffId) {
+    @Test
+    public void aDiffIsExecutedForRequestWithoutALeftSideSoItThrowsApiException() {
+
+        final Integer diffId = 13;
+        givenThatTheDiffRequestExistsWithTheRightDataLoaded(diffId);
+        try {
+
+            instance.executeDiff(diffId);
+            Assert.fail();
+        } catch(ApiException ex) {
+
+            assertThat(ex.getMessage()).isEqualTo("the diff with id " + diffId + " is missing the left data");
+        }
+    }
+
+    @Test
+    public void aDiffIsExecutedForRequestWithoutARightSideSoItThrowsApiException() {
+
+        final Integer diffId = 13;
+        givenThatTheDiffRequestExistsWithTheLeftDataLoaded(diffId);
+        try {
+
+            instance.executeDiff(diffId);
+            Assert.fail();
+        } catch(ApiException ex) {
+
+            assertThat(ex.getMessage()).isEqualTo("the diff with id " + diffId + " is missing the right data");
+        }
+    }
+
+    private void givenThatExistsARequestThatHasTheSameDataSizeButOneDifferenceAtTheEnd(Integer diffId) {
 
         byte[] leftData = DatatypeConverter.parseHexBinary( "AAAAAAAAAAAAAAAA");
         byte[] rightData = DatatypeConverter.parseHexBinary("AAAAAAAAAAAAAAFF");
@@ -180,7 +211,7 @@ public class DiffServiceTest {
         when(respository.findById(diffId)).thenReturn(Optional.of(diffRequest));
     }
 
-    private void givenThatExistsARequestHasSameDataSizeButTwoDifferences(Integer diffId) {
+    private void givenThatExistsARequestThatHasTheSameDataSizeButTwoDifferences(Integer diffId) {
 
         byte[] leftData = DatatypeConverter.parseHexBinary( "FFFFAAAAAAAAAAAA");
         byte[] rightData = DatatypeConverter.parseHexBinary("AAAAAAFFFFFFAAAA");
@@ -192,7 +223,7 @@ public class DiffServiceTest {
         when(respository.findById(diffId)).thenReturn(Optional.of(diffRequest));
     }
 
-    private void givenThatExistsARequestHasSameDataSizeButOneDifferenceInContentAtTheBeginning(Integer diffId) {
+    private void givenThatExistsARequestThatHasTheSameDataSizeButOneDifferenceInContentAtTheBeginning(Integer diffId) {
 
         byte[] leftData = DatatypeConverter.parseHexBinary( "FFFFAAAAAAAA");
         byte[] rightData = DatatypeConverter.parseHexBinary("AAAAAAAAAAAA");
@@ -203,7 +234,7 @@ public class DiffServiceTest {
         when(respository.findById(diffId)).thenReturn(Optional.of(diffRequest));
     }
 
-    private void givenThatExistsARequestHasDifferentDataSize(Integer diffId) {
+    private void givenThatExistsARequestWithDifferentDataSize(Integer diffId) {
 
         byte[] leftData = DatatypeConverter.parseHexBinary("AAAAAAAAAAAA");
         byte[] rightData = DatatypeConverter.parseHexBinary("AAAAAAAAAAAADD");
@@ -215,7 +246,7 @@ public class DiffServiceTest {
         when(respository.findById(diffId)).thenReturn(Optional.of(diffRequest));
     }
 
-    private void givenThatExistsARequestHasTheSameData(Integer diffId) {
+    private void givenThatExistsARequestThatHasTheSameData(Integer diffId) {
 
         byte[] leftData = DatatypeConverter.parseHexBinary("AAAAAAAAAAAA");
         byte[] rightData = DatatypeConverter.parseHexBinary("AAAAAAAAAAAA");

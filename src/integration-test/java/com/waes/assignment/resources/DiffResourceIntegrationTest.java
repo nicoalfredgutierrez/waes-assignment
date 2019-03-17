@@ -111,7 +111,7 @@ public class DiffResourceIntegrationTest {
     }
 
     @Test
-    public void theDiffOverAnUnexistingDiffInformsResourceNotFoud() {
+    public void theDiffOverAnUnexistingDiffRequestInformsResourceNotFound() {
 
         final Integer diffId = 12;
 
@@ -120,6 +120,29 @@ public class DiffResourceIntegrationTest {
                 .expectBody().json("{\n" +
                 "    detail: \"the diff with id " + diffId + " could not be found to execute\"\n" +
                 "}");
+    }
+
+    @Test
+    public void theDiffWithOnlyItsRightSideLoadedInformsInternalError() {
+
+        final Integer diffId = 12;
+        givenThatExistsADiffRequestWithTheRightSide(diffId);
+
+        this.webClient.get().uri("/V1/diff/" + diffId)
+                .exchange().expectStatus().is5xxServerError()
+                .expectBody().json("{\n" +
+                "    detail: \"the diff with id " + diffId + " is missing the left data\"\n" +
+                "}");
+    }
+
+
+    private void givenThatExistsADiffRequestWithTheRightSide(Integer diffId) {
+
+        RequestBinaryDataInsertion requestRightData = createDataInsertionRequestFromHexString("AAAAAAAAAAAAFFFFAAAAAAAAAADD");
+
+        this.webClient.post().uri("/V1/diff/" + diffId + "/right")
+                .body(BodyInserters.fromObject(requestRightData))
+                .exchange();
     }
 
     private void givenThatExistsADiffRequestWithSameSizeButDifferentContent(Integer diffId) {
