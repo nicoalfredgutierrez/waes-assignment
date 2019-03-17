@@ -6,7 +6,9 @@ import static org.assertj.core.api.Assertions.*;
 import com.waes.assignment.model.Diff;
 import com.waes.assignment.model.DiffExecutionResult;
 import com.waes.assignment.model.DiffRequest;
+import com.waes.assignment.model.exceptions.ResourceNotFoundException;
 import com.waes.assignment.repositories.DiffRequestRepository;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -149,6 +151,21 @@ public class DiffServiceTest {
         Diff diff = instance.executeDiff(diffId);
 
         thenTheDifferenceAtTheEndHasBeenDetected(diff);
+    }
+
+    @Test
+    public void aDiffIsExecutedOverANotExistingRequestSoItThrowsResourceNotFoundException() {
+
+        final Integer diffId = 13;
+        try {
+
+            instance.executeDiff(diffId);
+            Assert.fail();
+        } catch(ResourceNotFoundException ex) {
+
+            assertThat(ex.getMessage()).isEqualTo("the diff with id " + diffId + " could not be found to execute");
+        }
+
     }
 
     private void givenThatExistsARequestHasSameDataSizeButOneDifferenceAtTheEnd(Integer diffId) {
