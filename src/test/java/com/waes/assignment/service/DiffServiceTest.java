@@ -130,7 +130,7 @@ public class DiffServiceTest {
     }
 
     @Test
-    public void aDiffIsExecutedOverARequestWithSAmeDataSizesButTwoDifferences() {
+    public void aDiffIsExecutedOverARequestWithSameDataSizesButTwoDifferences() {
 
         final Integer diffId = 13;
         givenThatExistsARequestHasSameDataSizeButTwoDifferences(diffId);
@@ -138,6 +138,29 @@ public class DiffServiceTest {
         Diff diff = instance.executeDiff(diffId);
 
         thenBothDifferenceaHaveBeenDetected(diff);
+    }
+
+    @Test
+    public void aDiffIsExecutedOverARequestWithSameDataSizesADifferenceAtTheEnd() {
+
+        final Integer diffId = 13;
+        givenThatExistsARequestHasSameDataSizeButOneDifferenceAtTheEnd(diffId);
+
+        Diff diff = instance.executeDiff(diffId);
+
+        thenTheDifferenceAtTheEndHasBeenDetected(diff);
+    }
+
+    private void givenThatExistsARequestHasSameDataSizeButOneDifferenceAtTheEnd(Integer diffId) {
+
+        byte[] leftData = DatatypeConverter.parseHexBinary( "AAAAAAAAAAAAAAAA");
+        byte[] rightData = DatatypeConverter.parseHexBinary("AAAAAAAAAAAAAAFF");
+
+        DiffRequest diffRequest = new DiffRequest();
+        diffRequest.setId(diffId);
+        diffRequest.setLeftSideData(leftData);
+        diffRequest.setRightSideData(rightData);
+        when(respository.findById(diffId)).thenReturn(Optional.of(diffRequest));
     }
 
     private void givenThatExistsARequestHasSameDataSizeButTwoDifferences(Integer diffId) {
@@ -257,11 +280,28 @@ public class DiffServiceTest {
                 .isEqualTo(DiffExecutionResult.DIFFERENT_CONTENT);
         assertThat(diff.getDifferences()).as("Some differences hasn't been detected")
                 .hasSize(2);
-        assertThat(diff.getDifferences().get(0).getOffset()).isEqualTo(0).as("The first offset is incorrect");
-        assertThat(diff.getDifferences().get(0).getLength()).isEqualTo(2).as("The first length is incorrect");
+        assertThat(diff.getDifferences().get(0).getOffset()).as("The first offset is incorrect")
+                .isEqualTo(0);
+        assertThat(diff.getDifferences().get(0).getLength()).as("The first length is incorrect")
+                .isEqualTo(2);
+        assertThat(diff.getDifferences().get(1).getOffset()).as("The second offset is incorrect")
+                .isEqualTo(3);
+        assertThat(diff.getDifferences().get(1).getLength()).as("The second length is incorrect")
+                .isEqualTo(3);
+    }
 
-        assertThat(diff.getDifferences().get(1).getOffset()).isEqualTo(3).as("The second offset is incorrect");
-        assertThat(diff.getDifferences().get(1).getLength()).isEqualTo(3).as("The second length is incorrect");
+
+    private void thenTheDifferenceAtTheEndHasBeenDetected(Diff diff) {
+        assertThat(diff).isNotNull();
+        assertThat(diff.getDiffResult()).as("The diff result is invalid")
+                .isEqualTo(DiffExecutionResult.DIFFERENT_CONTENT);
+        assertThat(diff.getDifferences()).as("Some differences hasn't been detected")
+                .hasSize(1);
+        assertThat(diff.getDifferences().get(0).getOffset()).as("The offset is incorrect")
+                .isEqualTo(7);
+        assertThat(diff.getDifferences().get(0).getLength()).as("The length is incorrect")
+                .isEqualTo(1);
+
     }
 
 }

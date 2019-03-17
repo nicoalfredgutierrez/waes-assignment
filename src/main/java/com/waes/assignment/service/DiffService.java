@@ -67,15 +67,17 @@ public class DiffService {
         for(int i=0; i< leftSideData.length; i++) {
 
             if(leftSideData[i] != rightSideData[i]) {
+
                 if(currentDetail == null) {
+
                     currentDetail = new DifferenceDetail();
                     currentDetail.setOffset(i);
+                    differences.add(currentDetail);
                 }
                 currentDetail.addDifference();
             } else if (currentDetail != null) {
 
-                    differences.add(currentDetail);
-                    currentDetail = null;
+                currentDetail = null;
             }
         }
 
