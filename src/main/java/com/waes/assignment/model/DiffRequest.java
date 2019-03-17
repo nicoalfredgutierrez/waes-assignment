@@ -37,4 +37,7 @@ public class DiffRequest {
     public void setRightSideData(byte[] rightSideData) {
         this.rightSideData = rightSideData;
     }
+
+    public static class DiffExecution {
+    }
 }

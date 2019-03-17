@@ -1,8 +1,11 @@
 package com.waes.assignment.resources;
 
+import com.waes.assignment.model.Diff;
+import com.waes.assignment.model.DiffExecutionResult;
 import com.waes.assignment.model.RequestBinaryDataInsertion;
 import com.waes.assignment.service.DiffService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriTemplate;
@@ -34,9 +37,12 @@ public class DiffResource {
         return ResponseEntity.created(getDiffUrl(id)).build();
     }
 
-    @GetMapping("/V1/diff/{id}")
-    public ResponseEntity getDiff(@PathVariable Integer id) {
-        return ResponseEntity.ok().build();
+    @GetMapping(value = "/V1/diff/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Diff> getDiff(@PathVariable Integer id) {
+
+        Diff diff = new Diff();
+        diff.setDiffResult(DiffExecutionResult.EQUALS);
+        return ResponseEntity.ok(diff);
     }
 
     private URI getDiffUrl(Integer id) {

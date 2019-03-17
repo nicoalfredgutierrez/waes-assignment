@@ -69,15 +69,30 @@ public class DiffResourceIntegrationTest {
     public void theDiffOverARequestWithTheSameDataOnBothSidesReturnsThat() {
 
         final Integer diffId = 12;
-        givenThatExistsADiffRequestWithTheSameRightAndLeftDataAndId();
+        givenThatExistsADiffRequestWithTheSameRightAndLeftDataAndId(diffId);
 
         this.webClient.get().uri("/V1/diff/" + diffId)
-                .exchange().expectStatus().isOk();
+                .exchange().expectStatus().isOk()
+                .expectBody().json("{\n" +
+                                    "    diffResult: \"EQUALS\"\n" +
+                                    "}");
     }
 
-    private void givenThatExistsADiffRequestWithTheSameRightAndLeftDataAndId() {
+    private void givenThatExistsADiffRequestWithTheSameRightAndLeftDataAndId(Integer diffId) {
 
+        byte[] decodedData = DatatypeConverter.parseHexBinary("AAAAAAAAAAAAAAAAAAAAAAAAAA");
+        final String base64Data = getBase64EncodedBody(decodedData);
 
+        RequestBinaryDataInsertion request =  new RequestBinaryDataInsertion();
+        request.setData(base64Data);
+
+        this.webClient.post().uri("/V1/diff/12/right")
+                .body(BodyInserters.fromObject(request))
+                .exchange();
+
+        this.webClient.post().uri("/V1/diff/12/left")
+                .body(BodyInserters.fromObject(request))
+                .exchange();
     }
 
     private void theDiffRequestHasBeenSaved(Integer diffId, byte[] leftData, byte[] rightData) {
