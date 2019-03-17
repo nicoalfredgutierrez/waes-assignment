@@ -110,6 +110,18 @@ public class DiffResourceIntegrationTest {
                                 "}");
     }
 
+    @Test
+    public void theDiffOverAnUnexistingDiffInformsResourceNotFoud() {
+
+        final Integer diffId = 12;
+
+        this.webClient.get().uri("/V1/diff/" + diffId)
+                .exchange().expectStatus().isNotFound()
+                .expectBody().json("{\n" +
+                "    detail: \"the diff with id " + diffId + " could not be found to execute\"\n" +
+                "}");
+    }
+
     private void givenThatExistsADiffRequestWithSameSizeButDifferentContent(Integer diffId) {
 
         RequestBinaryDataInsertion requestLeftData = createDataInsertionRequestFromHexString( "FFAAAAAAAAAAAAAAAAAAAAFFFFFF");
