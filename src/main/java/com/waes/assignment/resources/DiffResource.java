@@ -1,7 +1,6 @@
 package com.waes.assignment.resources;
 
 import com.waes.assignment.model.Diff;
-import com.waes.assignment.model.DiffExecutionResult;
 import com.waes.assignment.model.RequestBinaryDataInsertion;
 import com.waes.assignment.service.DiffService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,8 +39,7 @@ public class DiffResource {
     @GetMapping(value = "/V1/diff/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Diff> getDiff(@PathVariable Integer id) {
 
-        Diff diff = new Diff();
-        diff.setDiffResult(DiffExecutionResult.EQUALS);
+        Diff diff = diffService.executeDiff(id);
         return ResponseEntity.ok(diff);
     }
 

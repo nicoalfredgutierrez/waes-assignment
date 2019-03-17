@@ -1,10 +1,13 @@
 package com.waes.assignment.service;
 
+import com.waes.assignment.model.Diff;
+import com.waes.assignment.model.DiffExecutionResult;
 import com.waes.assignment.model.DiffRequest;
 import com.waes.assignment.repositories.DiffRequestRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.Arrays;
 import java.util.Optional;
 
 @Component
@@ -31,6 +34,21 @@ public class DiffService {
         diffRespository.save(diffRequest);
     }
 
+    public Diff executeDiff(Integer diffId) {
+
+        DiffRequest diffRequest = diffRespository.findById(diffId).get();
+        Diff diff = new Diff();
+
+        if(Arrays.equals(diffRequest.getLeftSideData(),diffRequest.getRightSideData())) {
+
+            diff.setDiffResult(DiffExecutionResult.EQUALS);
+        } else {
+
+            diff.setDiffResult(DiffExecutionResult.DIFFERENT_SIZE);
+        }
+        return diff;
+    }
+
     private DiffRequest prepareDiffRequestForPersistence(Integer diffId) {
 
         Optional<DiffRequest> dbDiffRequest = diffRespository.findById(diffId);
@@ -46,4 +64,5 @@ public class DiffService {
 
         return diffRequest;
     }
+
 }

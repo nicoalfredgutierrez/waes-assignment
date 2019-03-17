@@ -3,6 +3,8 @@ package com.waes.assignment.service;
 import static org.mockito.Mockito.*;
 import static org.assertj.core.api.Assertions.*;
 
+import com.waes.assignment.model.Diff;
+import com.waes.assignment.model.DiffExecutionResult;
 import com.waes.assignment.model.DiffRequest;
 import com.waes.assignment.repositories.DiffRequestRepository;
 import org.junit.Before;
@@ -12,6 +14,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import javax.xml.bind.DatatypeConverter;
 import java.util.Optional;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -90,6 +93,55 @@ public class DiffServiceTest {
         theRightDataHasBeenUpdated(exisitingDiffRequest, data);
     }
 
+    @Test
+    public void aDiffIsExecutedOverARequestWithTheSameLeftAndRighrDataThenItReturnsEqualsResult() {
+
+        final Integer diffId = 13;
+        givenThatExistsARequestHasTheSameData(diffId);
+
+        Diff diff = instance.executeDiff(diffId);
+
+        assertThat(diff).isNotNull();
+        assertThat(diff.getDiffResult()).isEqualTo(DiffExecutionResult.EQUALS);
+    }
+
+    @Test
+    public void aDiffIsExecutedOverARequestWithDifferentDataSizes() {
+
+        final Integer diffId = 13;
+        givenThatExistsARequestHasDifferentSizeData(diffId);
+
+        Diff diff = instance.executeDiff(diffId);
+
+        assertThat(diff).isNotNull();
+        assertThat(diff.getDiffResult()).as("The diff result is invalid")
+                .isEqualTo(DiffExecutionResult.DIFFERENT_SIZE);
+    }
+
+    private void givenThatExistsARequestHasDifferentSizeData(Integer diffId) {
+
+        byte[] leftData = DatatypeConverter.parseHexBinary("AAAAAAAAAAAA");
+        byte[] rightData = DatatypeConverter.parseHexBinary("AAAAAAAAAAAADD");
+
+        DiffRequest diffRequest = new DiffRequest();
+        diffRequest.setId(diffId);
+        diffRequest.setLeftSideData(leftData);
+        diffRequest.setRightSideData(rightData);
+        when(respository.findById(diffId)).thenReturn(Optional.of(diffRequest));
+    }
+
+    private void givenThatExistsARequestHasTheSameData(Integer diffId) {
+
+        byte[] leftData = DatatypeConverter.parseHexBinary("AAAAAAAAAAAA");
+        byte[] rightData = DatatypeConverter.parseHexBinary("AAAAAAAAAAAA");
+
+        DiffRequest diffRequest = new DiffRequest();
+        diffRequest.setId(diffId);
+        diffRequest.setLeftSideData(leftData);
+        diffRequest.setRightSideData(rightData);
+        when(respository.findById(diffId)).thenReturn(Optional.of(diffRequest));
+    }
+
     private DiffRequest givenThatTheDiffRequestExistsWithTheLeftDataLoaded(Integer diffId) {
 
         DiffRequest diffRequest = new DiffRequest();
@@ -103,24 +155,23 @@ public class DiffServiceTest {
     private void theRightDataHasBeenUpdated(DiffRequest existingDiff, byte[] newData) {
 
         verify(respository, times(1)).save(diffRequestCaptor.capture());
-        assertThat(diffRequestCaptor.getValue().getId()).isEqualTo(existingDiff.getId())
-                .as("The diff id is not present");
-        assertThat(diffRequestCaptor.getValue().getLeftSideData()).isEqualTo(existingDiff.getLeftSideData())
-                .as("The existing data is not present");
-        assertThat(diffRequestCaptor.getValue().getRightSideData()).isEqualTo(newData)
-                .as("The new data is not present");
+        assertThat(diffRequestCaptor.getValue().getId()).as("The diff id is not present")
+                .isEqualTo(existingDiff.getId());
+        assertThat(diffRequestCaptor.getValue().getLeftSideData()).as("The existing data is not present")
+                .isEqualTo(existingDiff.getLeftSideData());
+        assertThat(diffRequestCaptor.getValue().getRightSideData()).as("The new data is not present")
+                .isEqualTo(newData);
     }
-
 
     private void theLeftDataHasBeenUpdated(DiffRequest existingDiff, byte[] newData) {
 
         verify(respository, times(1)).save(diffRequestCaptor.capture());
-        assertThat(diffRequestCaptor.getValue().getId()).isEqualTo(existingDiff.getId())
-                .as("The diff id is not present");
-        assertThat(diffRequestCaptor.getValue().getLeftSideData()).isEqualTo(newData)
-                .as("The new data is not present");
-        assertThat(diffRequestCaptor.getValue().getRightSideData()).isEqualTo(existingDiff.getRightSideData())
-                .as("The existing data is not present");
+        assertThat(diffRequestCaptor.getValue().getId()).as("The diff id is not present")
+                .isEqualTo(existingDiff.getId());
+        assertThat(diffRequestCaptor.getValue().getLeftSideData()).as("The new data is not present")
+                .isEqualTo(newData);
+        assertThat(diffRequestCaptor.getValue().getRightSideData()).as("The existing data is not present")
+                .isEqualTo(existingDiff.getRightSideData());
     }
 
     private DiffRequest givenThatTheDiffRequestExistsWithTheRightDataLoaded(Integer diffId) {
