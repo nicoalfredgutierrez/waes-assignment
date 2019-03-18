@@ -63,6 +63,10 @@ public class DiffResource {
         return new UriTemplate("/V1.0/diff").expand(id);
     }
 
+    /**
+     * Used only for dependecy injection
+     * @param diffService
+     */
     @Autowired
     public void setDiffService(DiffService diffService) {
         this.diffService = diffService;

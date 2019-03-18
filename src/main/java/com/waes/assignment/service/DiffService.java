@@ -15,6 +15,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Contains the logic to save and execute a dif of binary data.
+ */
 @Component
 public class DiffService {
 
@@ -25,6 +28,13 @@ public class DiffService {
         this.diffRespository = diffRespository;
     }
 
+
+    /**
+     * Saves the left side ot the diff request with the given id. If the diff request exists then it is updated,
+     * otherwise it is created.
+     * @param diffId The id to track the diff
+     * @param data the binary data to be saved in the left side
+     */
     public void saveLeftSideOfADiff(Integer diffId, byte[] data) {
 
         DiffRequest diffRequest = prepareDiffRequestForPersistence(diffId);
@@ -32,6 +42,12 @@ public class DiffService {
         diffRespository.save(diffRequest);
     }
 
+    /**
+     * Saves the right side ot the diff request with the given id. If the diff request exists then it is updated,
+     * otherwise it is created.
+     * @param diffId The id to track the diff
+     * @param data the binary data to be saved in the right side
+     */
     public void saveRightSideOfADiff(Integer diffId, byte[] data) {
 
         DiffRequest diffRequest = prepareDiffRequestForPersistence(diffId);
@@ -39,6 +55,12 @@ public class DiffService {
         diffRespository.save(diffRequest);
     }
 
+    /**
+     * Executes a diff previously stored with a given id.
+     * @param diffId The id of the request to be stored
+     * @return The diff result.
+     * @throws ResourceNotFoundException When the diff execution is attempted on an non existent diff.
+     */
     public Diff executeDiff(Integer diffId) throws ResourceNotFoundException  {
 
         Optional<DiffRequest> diffRequest = diffRespository.findById(diffId);

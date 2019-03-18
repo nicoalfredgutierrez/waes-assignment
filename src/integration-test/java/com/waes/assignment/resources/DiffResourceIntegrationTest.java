@@ -111,7 +111,7 @@ public class DiffResourceIntegrationTest {
     }
 
     @Test
-    public void theDiffOverAnUnexistingDiffRequestInformsResourceNotFound() {
+    public void theDiffOverAnNonExistentDiffRequestInformsResourceNotFound() {
 
         final Integer diffId = 12;
 

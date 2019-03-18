@@ -38,7 +38,7 @@ public class DiffServiceTest {
     }
 
     @Test
-    public void theLeftSideOfAnUnexistingDiffIsSavedSoTheDiffRequestIsCreated() {
+    public void theLeftSideOfAnNonExistentDiffIsSavedSoTheDiffRequestIsCreated() {
 
         final Integer diffId = 13;
         final byte[] data = {(byte)0x80, 0x53, 0x1c,
@@ -51,7 +51,7 @@ public class DiffServiceTest {
     }
 
     @Test
-    public void theRightSideOfAnUnexistingDiffIsSavedSoTheDiffRequestIsCreated() {
+    public void theRightSideOfAnNonExistentDiffIsSavedSoTheDiffRequestIsCreated() {
 
         final Integer diffId = 13;
         final byte[] data = {(byte)0x80, 0x53, 0x1c,
@@ -155,7 +155,7 @@ public class DiffServiceTest {
     }
 
     @Test
-    public void aDiffIsExecutedForANotExistingRequestSoItThrowsResourceNotFoundException() {
+    public void aDiffIsExecutedForANonExistentRequestSoItThrowsResourceNotFoundException() {
 
         final Integer diffId = 13;
         try {
@@ -286,7 +286,7 @@ public class DiffServiceTest {
                 .isEqualTo(existingDiff.getId());
         assertThat(diffRequestCaptor.getValue().getLeftSideData()).as("The new data is not present")
                 .isEqualTo(newData);
-        assertThat(diffRequestCaptor.getValue().getRightSideData()).as("The existing data is not present")
+        assertThat(diffRequestCaptor.getValue().getRightSideData()).as("The right data is not present")
                 .isEqualTo(existingDiff.getRightSideData());
     }
 

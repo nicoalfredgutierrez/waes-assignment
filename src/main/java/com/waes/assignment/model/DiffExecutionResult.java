@@ -1,5 +1,6 @@
 package com.waes.assignment.model;
 
+
 public enum DiffExecutionResult {
 
     EQUALS,

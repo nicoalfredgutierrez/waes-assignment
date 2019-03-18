@@ -5,13 +5,17 @@ import io.swagger.annotations.ApiModelProperty;
 
 import java.util.List;
 
-@ApiModel("The execution result of a diff")
+/**
+ * Represents the diff execution result. In case that both sides have the same size but different content, the differences will be listed
+ * in differences, otherwise differences will be null
+ */
+@ApiModel("The diff execution result.")
 public class Diff {
 
     private DiffExecutionResult diffResult;
     private List<DifferenceDetail> differences;
 
-    @ApiModelProperty("The type of result obtained")
+    @ApiModelProperty("The result obtained")
     public DiffExecutionResult getDiffResult() {
         return diffResult;
     }
