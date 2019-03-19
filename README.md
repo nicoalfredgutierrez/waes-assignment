@@ -16,6 +16,6 @@
 ## Application usage
 
 - To run unit tests only: In console execute (Linux)./gradlew.sh test
-- To run integration tests: In console execute (Linux)./gradlew.sh integrationTest (unit test are also run as this task dependonthis)
+- To run integration tests: In console execute (Linux)./gradlew.sh integrationTest (unit test are also run)
 - To build the app: In console execute (Linux) ./gradlew.sh build. The jar is stored in <project_root>/build/libs
 - To run the app: In console execute java -jar <project_root>/build/libs/assignment-1.0.0-SNAPSHOT.jar or ./gradlew bootRun. Once the app is up you can access localhost:8080/swagger-ui.html# to access the swagger documentation an try the endpoints with a ui.
