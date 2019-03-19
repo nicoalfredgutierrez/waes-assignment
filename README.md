@@ -19,3 +19,11 @@
 - To run integration tests: In console execute (Linux)./gradlew.sh integrationTest (unit test are also run)
 - To build the app: In console execute (Linux) ./gradlew.sh build. The jar will be created in <project_root>/build/libs
 - To run the app: In console execute java -jar <project_root>/build/libs/assignment-1.0.0-SNAPSHOT.jar or ./gradlew bootRun. Once the app is up you can access http://localhost:8080/swagger-ui.html# to access the swagger documentation and try the endpoints with a ui.
+
+## Pending tasks
+
+Due to time restrictions there are some issues that I couldn't solve.
+
+- There is an exception thrown when swagger-ui is started. It Doesn't seem to affect the overall system operation.
+- I couldn't add input validations on endpoints.
+- I wanted to move the base64 decoding to a json decoder.
