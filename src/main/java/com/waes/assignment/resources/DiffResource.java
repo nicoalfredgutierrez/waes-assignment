@@ -26,7 +26,7 @@ public class DiffResource {
     @ApiOperation(value = "Allows to save the left side of a diff. If the diff is new, it will be created." +
             "If the left side has already been stored then it will be overwritten.")
 
-    public ResponseEntity<Integer> createLeftSideOfADiff(@PathVariable @ApiParam("The id of the diff") Integer id,
+    public ResponseEntity<Integer> createLeftSideOfADiff(@PathVariable  Integer id,
                                                          @RequestBody @ApiParam("The binary data to be stored as a side of a diff. It has to be a valid base64 encoded data")
                                                                  RequestBinaryDataInsertion request) {
 
@@ -37,7 +37,7 @@ public class DiffResource {
 
     @PostMapping("/V1/diff/{id}/right")
     @ApiOperation(value = "Allows to save the right side of a diff. If the diff is new, it will be created." +
-            "If the rights side has already been stored before then it will be overwritten.")
+            "If the right side has already been stored before then it will be overwritten.")
     public ResponseEntity<Integer> createRightSideOfADiff(@PathVariable @ApiParam("The id of the diff") Integer id,
                                                           @RequestBody @ApiParam("The binary data to be stored as a side of a diff. It has to be a valid base64 encoded data")
                                                                 RequestBinaryDataInsertion request) {
@@ -49,8 +49,8 @@ public class DiffResource {
 
     @GetMapping(value = "/V1/diff/{id}", produces = MediaType. APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Executes a diff and returns the result of it.")
-    @ApiResponses(value = { @ApiResponse(code = 200, message = "The diff has been succesfully executed."),
-                            @ApiResponse(code = 404, message = "The execution was attempted on an non existing diff."),
+    @ApiResponses(value = { @ApiResponse(code = 200, message = "The diff has been successfully executed."),
+                            @ApiResponse(code = 404, message = "The execution was attempted on an non existent diff."),
                             @ApiResponse(code = 500, message = "The execution was attempted on an incomplete diff request.")})
     public ResponseEntity<Diff> getDiff(@PathVariable Integer id) {
 

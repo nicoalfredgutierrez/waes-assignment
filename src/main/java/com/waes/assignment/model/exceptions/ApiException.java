@@ -1,7 +1,7 @@
 package com.waes.assignment.model.exceptions;
 
 /**
- * Employed to encapsulate an internal exception.
+ * Class employed to encapsulate an internal exception.
  */
 public class ApiException  extends RuntimeException {
 
